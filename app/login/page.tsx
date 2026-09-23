@@ -1,0 +1,3 @@
+export default function LoginPage() {
+  return <main className="login-shell"><div className="login-card"><div className="brand"><span className="brand-mark">C</span><span>ContentRoute</span></div><p className="eyebrow">Owner access</p><h1>Sign in to your publishing workspace.</h1><p className="muted">Only the configured owner email can access ContentRoute. Authentication will be enabled when Supabase is connected.</p><button className="primary" disabled>Continue with email</button><p className="login-note">Setup required: <code>NEXT_PUBLIC_SUPABASE_URL</code> and <code>SUPABASE_SERVICE_ROLE_KEY</code></p></div></main>;
+}
