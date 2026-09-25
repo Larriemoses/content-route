@@ -1,6 +1,6 @@
-# ContentRoute
+# Writeet
 
-ContentRoute is a private, owner-only LinkedIn publishing workspace for researching, drafting, evaluating, scheduling, and auditing evidence-backed posts.
+Writeet is a private, owner-only LinkedIn publishing workspace for researching, drafting, evaluating, scheduling, and auditing evidence-backed posts.
 
 This repository follows the MVP build specification in `ContentRoute-Codex-Build-Spec.md` (kept outside the repository as the supplied brief). The initial deployment target is Vercel with Supabase, OpenRouter, and official LinkedIn OAuth.
 
