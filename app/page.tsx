@@ -17,6 +17,8 @@ export default function Home() {
   const [ideaState, setIdeaState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [researchState, setResearchState] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [research, setResearch] = useState<{ selectedHeadline?: string; whyItMatters?: string; angle?: string; draft?: string; sourceUrls?: string[] } | null>(null);
+  const [approval, setApproval] = useState<'review' | 'approved' | 'scheduled'>('review');
+  const [followUp, setFollowUp] = useState('');
 
   async function createIdea(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,7 +37,7 @@ export default function Home() {
       const response = await fetch('/api/research', { cache: 'no-store' });
       const payload = await response.json();
       if (!response.ok || !payload.ok) throw new Error('Research failed');
-      setResearch(payload.result); setResearchState('ready');
+      setResearch(payload.result); setFollowUp('A useful question to carry into the week: where should we demand proof before trusting an AI system?'); setApproval('review'); setResearchState('ready');
     } catch { setResearchState('error'); }
   }
 
@@ -55,7 +57,7 @@ export default function Home() {
       </div>
       <div className="section-heading"><div><p className="eyebrow">Current work</p><h2>One decision at a time</h2></div><button className="text-button">View all drafts →</button></div>
       <section className="panel draft-card" id="drafts"><div className="draft-meta"><span className="tag">Practical AI</span><span>Draft 03 · generated 12 min ago</span></div><h3>What changes when an AI workflow has to explain itself?</h3><p className="muted">A practical note on making evidence visible before a useful automation becomes a risky one.</p><div className="gates">{gates.map(([name, state, tone]) => <div className="gate" key={name}><span className={`gate-dot ${tone}`} /><span>{name}</span><strong>{state}</strong></div>)}</div><div className="draft-footer"><span className="score-badge">78 <small>/ 100</small></span><button className="secondary">Open evaluation</button></div></section>
-      {research && <section className="panel research-result" id="research"><div className="panel-kicker">Fresh research draft</div><h3>{research.selectedHeadline}</h3><p className="muted">{research.whyItMatters}</p><div className="research-copy">{research.draft}</div><div className="draft-footer"><span className="muted">Review before publishing</span><button className="secondary" disabled>Publish to LinkedIn (review required)</button></div></section>}
+      {research && <section className="panel research-result" id="research"><div className="draft-meta"><span className="tag">Fresh research draft</span><span>{approval === 'review' ? 'Awaiting your review' : approval === 'approved' ? 'Approved · choose a time' : 'Scheduled for LinkedIn'}</span></div><h3>{research.selectedHeadline}</h3><p className="muted">{research.whyItMatters}</p><div className="research-copy">{research.draft}</div><label className="review-field">Follow-up comment<textarea value={followUp} onChange={(event) => setFollowUp(event.target.value)} rows={3} /></label><div className="draft-footer"><span className="muted">{approval === 'review' ? 'Review both pieces before approving' : 'Ready for your schedule'}</span><div className="hero-actions">{approval === 'review' && <button className="primary" onClick={() => setApproval('approved')}>Approve draft</button>}{approval === 'approved' && <button className="primary" onClick={() => setApproval('scheduled')}>Schedule for tomorrow morning</button>}{approval === 'scheduled' && <span className="approval-badge">Queued ✓</span>}</div></div></section>}
       {researchState === 'error' && <p className="form-message error">Research could not be completed. Check the AI provider connection.</p>}
       <div className="section-heading routes-heading"><div><p className="eyebrow">Content routes</p><h2>Keep the mix intentional</h2></div><button className="text-button">Manage routes →</button></div>
       <section className="route-list" id="audit">{routes.map((route, i) => <a className="route" href="#ideas" key={route}><span className="route-number">0{i + 1}</span><span>{route}</span><span className="route-count">{[3, 2, 1, 0][i]} ideas</span><span className="arrow">↗</span></a>)}</section>
