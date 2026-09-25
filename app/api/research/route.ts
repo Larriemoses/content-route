@@ -4,7 +4,13 @@ import { requestStructuredCompletion } from '@/lib/openrouter/client';
 type Headline = { title: string; link: string; source: string };
 
 function extractHeadlines(xml: string): Headline[] {
-  return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].slice(0, 12).map((match) => {
+  const matches: RegExpExecArray[] = [];
+  const itemPattern = /<item>([\s\S]*?)<\/item>/g;
+  let match: RegExpExecArray | null;
+  while (matches.length < 12 && (match = itemPattern.exec(xml)) !== null) {
+    matches.push(match);
+  }
+  return matches.map((match) => {
     const item = match[1];
     const read = (name: string) => item.match(new RegExp(`<${name}>([\\s\\S]*?)<\\/${name}>`))?.[1]?.replace(/<!\[CDATA\[|\]\]>/g, '').trim() ?? '';
     return { title: read('title'), link: read('link'), source: read('source') };
