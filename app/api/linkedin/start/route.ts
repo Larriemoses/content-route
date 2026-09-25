@@ -11,7 +11,7 @@ export async function GET() {
   url.searchParams.set('client_id', clientId);
   url.searchParams.set('redirect_uri', redirectUri);
   url.searchParams.set('state', state);
-  url.searchParams.set('scope', 'openid profile email w_member_social');
+  url.searchParams.set('scope', 'w_member_social');
   const response = NextResponse.redirect(url);
   response.cookies.set('linkedin_oauth_state', state, { httpOnly: true, secure: true, sameSite: 'lax', maxAge: 600, path: '/' });
   return response;
