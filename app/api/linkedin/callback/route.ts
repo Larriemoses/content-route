@@ -17,8 +17,16 @@ export async function GET(request: NextRequest) {
   if (!token.access_token) return NextResponse.json({ ok: false, error: 'LinkedIn returned no access token' }, { status: 502 });
   const profileResponse = await fetch('https://api.linkedin.com/v2/userinfo', { headers: { Authorization: `Bearer ${token.access_token}` } });
   const profile = profileResponse.ok ? await profileResponse.json() : {};
+  let memberSub = typeof profile.sub === 'string' ? profile.sub : null;
+  if (!memberSub) {
+    const legacyProfileResponse = await fetch('https://api.linkedin.com/v2/me', { headers: { Authorization: `Bearer ${token.access_token}` } });
+    if (legacyProfileResponse.ok) {
+      const legacyProfile = await legacyProfileResponse.json();
+      memberSub = typeof legacyProfile.id === 'string' ? legacyProfile.id : null;
+    }
+  }
   const db = getAdminClient();
-  const { error } = await db.from('linkedin_connections').upsert({ provider: 'linkedin', member_sub: profile.sub ?? null, access_token: token.access_token, expires_at: new Date(Date.now() + (token.expires_in ?? 5184000) * 1000).toISOString(), updated_at: new Date().toISOString() }, { onConflict: 'provider' });
+  const { error } = await db.from('linkedin_connections').upsert({ provider: 'linkedin', member_sub: memberSub, access_token: token.access_token, expires_at: new Date(Date.now() + (token.expires_in ?? 5184000) * 1000).toISOString(), updated_at: new Date().toISOString() }, { onConflict: 'provider' });
   if (error) return NextResponse.json({ ok: false, error: 'LinkedIn connected but could not be stored' }, { status: 502 });
   const response = new NextResponse('<h1>LinkedIn connected</h1><p>You can close this window and return to Writeet.</p>', { headers: { 'content-type': 'text/html' } });
   response.cookies.delete('linkedin_oauth_state');
