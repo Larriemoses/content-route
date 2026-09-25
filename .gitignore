@@ -1,8 +1,5 @@
+work/
+.env*
+!.env.example
 node_modules/
 .next/
-out/
-.env
-.env.local
-.vercel/
-coverage/
-*.log
