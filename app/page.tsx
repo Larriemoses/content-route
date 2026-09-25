@@ -45,6 +45,7 @@ export default function Home() {
 
   async function runResearch() {
     setResearchState('loading');
+    setActionMessage('');
     try {
       const response = await fetch('/api/research', { cache: 'no-store' });
       const payload = await response.json();
@@ -61,7 +62,7 @@ export default function Home() {
       <div className="brand"><span className="brand-mark">W</span><span>Writeet</span></div>
       <p className="eyebrow">Publishing workspace</p>
       <nav><a className="active" href="#overview">Overview</a><a href="#ideas">Ideas</a><a href="#drafts">Drafts</a><a href="#schedule">Schedule</a><a href="#audit">Audit trail</a></nav>
-      <div className="sidebar-foot"><span className="status-dot" /> Publishing paused<br /><small>Safe default until LinkedIn is connected</small></div>
+      <div className="sidebar-foot"><span className="status-dot" /> Approval required<br /><small>Review each draft before LinkedIn publishing</small></div>
     </aside>
     <section className="content">
       <header className="topbar"><div><p className="eyebrow">Wednesday · 23 September 2026</p><h1>Good morning, Olarewaju.</h1></div><button className="ghost" onClick={() => setActionMessage('Settings will be available when workspace accounts are enabled.')}>Settings</button></header>
