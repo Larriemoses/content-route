@@ -13,7 +13,7 @@ function extractHeadlines(xml: string): Headline[] {
 
 export async function GET() {
   try {
-    const news = await fetch('https://news.google.com/rss/search?q=artificial+intelligence+OR+AI&hl=en-US&gl=US&ceid=US:en', { next: { revalidate: 900 } });
+    const news = await fetch('https://news.google.com/rss/search?q=artificial+intelligence+OR+AI&hl=en-US&gl=US&ceid=US:en', { cache: 'no-store' });
     if (!news.ok) return NextResponse.json({ ok: false, error: 'News source unavailable' }, { status: 502 });
     const headlines = extractHeadlines(await news.text());
     if (!headlines.length) return NextResponse.json({ ok: false, error: 'No AI news found' }, { status: 502 });
