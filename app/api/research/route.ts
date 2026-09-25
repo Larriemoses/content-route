@@ -28,7 +28,17 @@ export async function GET() {
       system: 'You are Writeet, an evidence-first LinkedIn thought-leadership editor. Return JSON only. Never invent facts. Select one timely story and explain why it matters to a builder focused on practical AI, AI security, responsible automation, and learning.',
       user: JSON.stringify({ profile: 'A practical AI builder and lifelong learner who writes about responsible automation, AI security, and making technical ideas useful.', headlines, output: { selectedHeadline: 'string', whyItMatters: 'string', angle: 'string', draft: 'string', claimsToVerify: ['string'], sourceUrls: ['string'] } }),
     });
-    return NextResponse.json({ ok: true, generatedAt: new Date().toISOString(), result, sources: headlines });
+    const raw = result as Record<string, unknown>;
+    const headlineGroup = (raw.headlines && typeof raw.headlines === 'object' ? raw.headlines : {}) as Record<string, unknown>;
+    const normalized = {
+      selectedHeadline: raw.selectedHeadline ?? headlineGroup.selectedHeadline ?? headlineGroup.title ?? headlines[0].title,
+      whyItMatters: raw.whyItMatters ?? '',
+      angle: raw.angle ?? '',
+      draft: raw.draft ?? '',
+      claimsToVerify: raw.claimsToVerify ?? [],
+      sourceUrls: raw.sourceUrls ?? [headlineGroup.link ?? headlines[0].link],
+    };
+    return NextResponse.json({ ok: true, generatedAt: new Date().toISOString(), result: normalized, sources: headlines });
   } catch (error) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Research failed' }, { status: 502 });
   }
