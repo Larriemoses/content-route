@@ -24,7 +24,7 @@ export async function GET() {
     const headlines = extractHeadlines(await news.text());
     if (!headlines.length) return NextResponse.json({ ok: false, error: 'No AI news found' }, { status: 502 });
     const result = await requestStructuredCompletion({
-      model: process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini',
+      model: process.env.OPENROUTER_MODEL || 'openrouter/free',
       system: 'You are Writeet, an evidence-first LinkedIn thought-leadership editor. Return JSON only. Never invent facts. Select one timely story and explain why it matters to a builder focused on practical AI, AI security, responsible automation, and learning.',
       user: JSON.stringify({ profile: 'A practical AI builder and lifelong learner who writes about responsible automation, AI security, and making technical ideas useful.', headlines, output: { selectedHeadline: 'string', whyItMatters: 'string', angle: 'string', draft: 'string', claimsToVerify: ['string'], sourceUrls: ['string'] } }),
     });
